@@ -1,0 +1,14 @@
+.container {
+  place-items: center;
+  display: grid;
+  margin: 0;
+  min-height: 100vh;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: inherit;
+}

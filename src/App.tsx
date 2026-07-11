@@ -7,25 +7,41 @@ import Card from "./components/Card";
   convierte cada simbolo en un objeto carta con el map(), cada uno tiene sus propiedades */
 }
 function createCard() {
-  const symbol = ["A", "♣️", "♦️", "♥️", "♠️", "B"];
+  {
+    /* define los simbolos que existiran */
+  }
+  const symbol = ["🧐", "♣️", "♦️", "♥️", "♠️", "🤖"];
 
+  {
+    /* duplica los simbolos */
+  }
   const duplicate = [...symbol, ...symbol];
 
+  {
+    /*mezcla los 12 simbolos en orden aleatorio con el random devuelve numeros
+    positivos y negativos al azar, lo que hace que el sort mezcle sin orden*/
+  }
   const save = duplicate.sort(() => Math.random() - 0.5);
 
+  {
+    /*reccore y transforma cada simbolo en un objeto card con sus props*/
+  }
   const x = save.map((n, index) => {
     return { id: index, symbols: n, faceUp: false, wasFound: false };
   });
   return x;
 }
 
-{
-  /* el componente principal, tiene 2 estados: cards el arreglo de 12 cartas, se inicializa con createcard()
-  firstCard la primera carta clickeada, empieza en null*/
-}
 function App() {
+  {
+    /* aqui guardo los arreglos de las 12 cartas, y el set lo ocupo para actualizar el arreglo*/
+  }
   const [cards, setCards] = useState(createCard);
 
+  {
+    /*aqui guardo la primera carta que se selecciona con el click, para luego comporarlas.
+    tambien empieza en null por que nadie a clickeado nada*/
+  }
   const [firstCard, setFirstCard] = useState<{
     id: number;
     symbols: string;
@@ -33,19 +49,22 @@ function App() {
     wasFound: boolean;
   } | null>(null);
 
-  {
-    /* se ejecuta cuando clickean una carta.
-    si firstCard === null (no hay primera carta todavia), guarda la carta seleccionada
-    com primera carta con setFirstCard */
-  }
   const handleClick = (selectCard: {
     id: number;
     symbols: string;
     faceUp: boolean;
     wasFound: boolean;
   }) => {
+    {
+      /*bloquea el clic si al carta ya fue encontrada o si es la misma carta que esta seleccionada
+      el "?" es para que no explote si el firstcard es null xD*/
+    }
     if (selectCard.wasFound === true || selectCard.id === firstCard?.id) {
       return null;
+    }
+    {
+      /*si no hay primera carta. guarda esta como primera y la voltea boca arriba
+      el map recorre todo y solo modifica la clickeada usando la id*/
     }
     if (firstCard === null) {
       setFirstCard(selectCard);
@@ -59,6 +78,9 @@ function App() {
         }),
       );
     } else {
+      {
+        /*se compara los simbolos si son iguales y marca ambas cartas como encontradas. luego reseteo el firstcard */
+      }
       if (firstCard.symbols === selectCard.symbols) {
         setCards(
           cards.map((card) => {
@@ -73,6 +95,10 @@ function App() {
         );
         setFirstCard(null);
       } else {
+        {
+          /*si los simbolos no son iguales primero voltea la segunda carta para que el jugador
+          la vea con el setTimeout espera 500ms y voltea todas las cartas que esten boca arriba y no encontradas*/
+        }
         setCards(
           cards.map((card) => {
             if (card.id === selectCard.id) {
@@ -97,27 +123,40 @@ function App() {
       }
     }
   };
+
+  const [colorFund, setColorFund] = useState("#000000");
+  document.body.style.backgroundColor = colorFund;
   /* dibuja las cartas en la pantalla, recorre cards con el map() y por cada carta
     renderiza un componente <Card /> le pasa 4 props*/
   return (
-    <div
-      className="board"
-      style={{
-        justifyContent: "center",
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 0fr)",
-      }}
-    >
-      {cards.map((card, index) => (
-        <Card
-          key={index}
-          id={card.id}
-          symbols={card.symbols}
-          faceUp={card.faceUp}
-          wasFound={card.wasFound}
-          click={() => handleClick(card)}
-        />
-      ))}
+    <div className="container" style={{ backgroundColor: colorFund }}>
+      <div
+        style={{
+          justifyContent: "center",
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 0fr)",
+        }}
+      >
+        {cards.map((card, index) => (
+          <Card
+            key={index}
+            id={card.id}
+            symbols={card.symbols}
+            faceUp={card.faceUp}
+            wasFound={card.wasFound}
+            click={() => handleClick(card)}
+          />
+        ))}
+      </div>
+      <input
+        onChange={(e) => setColorFund(e.target.value)}
+        type="color"
+        style={{}}
+      />
+
+      <h1 style={{ textAlign: "center", display: "grid", color: "#FFFFFF" }}>
+        {cards.every((a) => a.wasFound === true) ? "Lo lograste🥳" : ""}
+      </h1>
     </div>
   );
 }
